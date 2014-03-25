@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>miniltconnect - Autoconnect to LightTable instance</title>
+    </head>
+    <body>
+        <form id="config">
+            <div class="field">
+                <label for="config_port">Port: </label>
+                <input id="config_port" type="number" name="port" />
+            </div>
+            <div class="field">
+                <label for="config_enable">Enable on this domain: </label>
+                <input id="config_enable" type="checkbox" name="config_enable" />
+            </div>
+            <input id="config_hostname" type="hidden" />
+        </form>
+        <script type="text/javascript" src="popup.js"></script>
+    </body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "manifest_version": 2,
+  "name": "LightTable Connect",
+  "description": "Automatically connect to a LightTable instance via web sockets.",
+  "version": "0.0.1",
+  "permissions": [
+    "*://*/*",
+    "storage",
+    "tabs",
+    "activeTab"
+  ],
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_popup": "popup.html"
+  }
+}
