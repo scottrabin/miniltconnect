@@ -1,6 +1,8 @@
 // extension cached configs
-var port = null;
-var enabledDomains = {};
+var config = {
+  port: null,
+  hostnames: {}
+};
 var lastActiveTabId = null;
 
 // page scripts for connecting/disconnecting from LT
@@ -46,8 +48,11 @@ var SCRIPT_EXECUTION_TEMPLATE = ["(function() {",
 function setPort(port) {
   var newVal = parseInt(port, 10);
   if (!isNaN(newVal)) {
-    port = newVal;
-    chrome.storage.local.set({port: newVal});
+    config.port = newVal;
+    chrome.storage.local.set({port: config.port});
+    if (lastActiveTabId) {
+      connectToTab(lastActiveTabId);
+    }
   }
 }
 
@@ -57,7 +62,7 @@ function setPort(port) {
  * @return {Number}
  */
 function getPort() {
-  return port;
+  return config.port;
 }
 
 /**
@@ -66,9 +71,9 @@ function getPort() {
  * @param {String} hostname
  */
 function addHostname(hostname) {
-  if (!enabledDomains[hostname]) {
-    enabledDomains[hostname] = true;
-    chrome.storage.local.set({"hostnames": enabledDomains});
+  if (!config.hostnames[hostname]) {
+    config.hostnames[hostname] = true;
+    chrome.storage.local.set({"hostnames": config.hostnames});
   }
 }
 
@@ -78,9 +83,9 @@ function addHostname(hostname) {
  * @param {String} hostname
  */
 function removeHostname(hostname) {
-  if (enabledDomains[hostname]) {
-    delete enabledDomains[hostname];
-    chrome.storage.local.set({"hostnames": enabledDomains});
+  if (config.hostnames[hostname]) {
+    delete config.hostnames[hostname];
+    chrome.storage.local.set({"hostnames": config.hostnames});
   }
 }
 
@@ -91,7 +96,7 @@ function removeHostname(hostname) {
  * @return {Boolean}
  */
 function isHostnameEnabled(hostname) {
-  return enabledDomains[hostname] || false;
+  return config.hostnames[hostname] || false;
 }
 
 /**
@@ -143,7 +148,7 @@ function toggleTabConnection(tabId, enable) {
   // that need to access the page variable (e.g. window.io) by
   // actually inserting a <script> element with the contents as needed...
   var template = (enable ? LT_WS_CONNECT : LT_WS_DISCONNECT);
-  executeScriptInPageContext(tabId, sub(template, {host: JSON.stringify('http://localhost:' + port)}), function() {
+  executeScriptInPageContext(tabId, sub(template, {host: JSON.stringify('http://localhost:' + getPort())}), function() {
     if (enable) {
       lastActiveTabId = tabId;
     } else if (lastActiveTabId === tabId) {
@@ -204,9 +209,8 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
 });
 
 // load the stored values
-chrome.storage.local.get(null, function(vals) {
-  setPort(vals.port);
-  enabledDomains = vals.hostnames;
+chrome.storage.local.get(null, function(conf) {
+  config = conf;
 });
 
 // Public API
