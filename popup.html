@@ -3,6 +3,33 @@
     <head>
         <title>miniltconnect - Autoconnect to LightTable instance</title>
     </head>
+    <style type="text/css">
+        * {
+            font-family: Helvetica, arial, sans-serif;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        body {
+            width: 240px;
+        }
+        label,
+        input {
+            display: inline-block;
+            vertical-align: middle;
+            margin: 5px 0;
+        }
+        label {
+            width: 150px;
+            text-align: right;
+            margin-right: 5px;
+        }
+        input[name="port"] {
+            width: 70px;
+            padding: 2px 4px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+    </style>
     <body>
         <form id="config">
             <div class="field">
